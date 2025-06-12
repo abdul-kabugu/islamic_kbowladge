@@ -27,7 +27,7 @@ export default function DonationModal() {
         width: 200,
         margin: 2,
         color: {
-          dark: '#000000',
+          dark: '#FF8C42', // warm-orange
           light: '#FFFFFF'
         }
       });
@@ -43,7 +43,7 @@ export default function DonationModal() {
       {/* Floating Donate Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-islamic-green hover:bg-green-700 text-white rounded-full p-4 shadow-2xl transition-all duration-300 hover:scale-110"
+        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-warm-orange to-warm-yellow hover:from-warm-yellow hover:to-warm-orange text-white rounded-full p-4 shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-white/20"
       >
         <Heart className="w-6 h-6" />
         <span className="ml-2 font-semibold">Changia</span>
@@ -96,38 +96,55 @@ export default function DonationModal() {
                 </div>
               </>
             ) : (
-              <div className="bg-black text-white p-8 rounded-lg">
+              <div className="bg-gradient-to-br from-warm-orange/10 to-warm-yellow/10 border-2 border-gradient-to-r from-warm-orange to-warm-yellow p-8 rounded-xl shadow-lg">
                 <div className="mb-6">
                   {qrCodeDataUrl && (
-                    <div className="flex justify-center mb-4">
-                      <img 
-                        src={qrCodeDataUrl} 
-                        alt="QR Code for donation" 
-                        className="border-4 border-white rounded-lg shadow-lg"
-                      />
+                    <div className="flex justify-center mb-6">
+                      <div className="bg-white p-4 rounded-xl shadow-lg border-4 border-gradient-to-r from-warm-orange to-warm-yellow">
+                        <img 
+                          src={qrCodeDataUrl} 
+                          alt="QR Code for donation" 
+                          className="rounded-lg"
+                        />
+                      </div>
                     </div>
                   )}
-                  <p className="text-blue-400 text-lg font-semibold mb-4">Scan Qr code</p>
+                  <p className="text-warm-orange text-xl font-bold mb-6 text-center font-playfair">Scan QR Code</p>
                   
-                  <hr className="border-gray-400 mb-4" />
-                  
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-white font-medium">Lipa Number</span>
-                    <span className="text-white font-bold text-lg">{phoneNumber}</span>
+                  <div className="bg-white/50 backdrop-blur-sm rounded-lg p-4 mb-4 border border-warm-orange/20">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-gray-700 font-medium">Namba ya Lipa:</span>
+                      <span className="text-warm-orange font-bold text-xl">{phoneNumber}</span>
+                    </div>
+                    
+                    <div className="text-center pt-3 border-t border-warm-orange/20">
+                      <p className="text-gray-800 font-bold text-lg">{organizationName}</p>
+                      <p className="text-sm text-gray-600 mt-1">Kazi ya Dawa na Uongozi</p>
+                    </div>
                   </div>
-                  
-                  <div className="text-center">
-                    <p className="text-white font-semibold text-lg">{organizationName}</p>
+
+                  <div className="text-center mb-4">
+                    <p className="text-sm text-gray-600 font-amiri">بارك الله فيكم</p>
+                    <p className="text-xs text-gray-500">Baraka Allah fikum</p>
                   </div>
                 </div>
 
-                <Button 
-                  onClick={() => setShowQRCode(false)}
-                  variant="outline"
-                  className="w-full border-white text-white hover:bg-white hover:text-black transition-all"
-                >
-                  Rudi Nyuma
-                </Button>
+                <div className="space-y-3">
+                  <Button 
+                    onClick={() => setShowQRCode(false)}
+                    className="w-full bg-gradient-to-r from-warm-orange to-warm-yellow text-white hover:from-warm-yellow hover:to-warm-orange transition-all py-3 rounded-lg font-semibold shadow-md"
+                  >
+                    Rudi Nyuma
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => setIsOpen(false)}
+                    variant="outline"
+                    className="w-full border-2 border-warm-orange/30 text-gray-600 hover:bg-warm-orange/10 transition-all py-2 rounded-lg"
+                  >
+                    Funga
+                  </Button>
+                </div>
               </div>
             )}
           </div>
