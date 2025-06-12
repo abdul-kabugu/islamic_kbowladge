@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,10 +8,23 @@ import type { Schedule } from "@shared/schema";
 
 export default function DarsaSchedule() {
   const [currentMosqueIndex, setCurrentMosqueIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   const { data: schedules, isLoading } = useQuery<Schedule[]>({
     queryKey: ['/api/schedules'],
   });
+
+  // Check for mobile screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   if (isLoading) {
     return (
@@ -43,19 +56,28 @@ export default function DarsaSchedule() {
   const mosqueNames = Object.keys(mosqueGroups);
   const totalMosques = mosqueNames.length;
 
+  const itemsPerSlide = isMobile ? 1 : 2;
+  const maxSlides = Math.ceil(totalMosques / itemsPerSlide);
+
   const nextMosque = () => {
-    setCurrentMosqueIndex((prev) => (prev + 1) % totalMosques);
+    setCurrentMosqueIndex((prev) => {
+      const nextIndex = prev + itemsPerSlide;
+      return nextIndex >= totalMosques ? 0 : nextIndex;
+    });
   };
 
   const prevMosque = () => {
-    setCurrentMosqueIndex((prev) => (prev - 1 + totalMosques) % totalMosques);
+    setCurrentMosqueIndex((prev) => {
+      const prevIndex = prev - itemsPerSlide;
+      return prevIndex < 0 ? Math.max(0, totalMosques - itemsPerSlide) : prevIndex;
+    });
   };
 
   const getCurrentMosques = () => {
     if (totalMosques === 0) return [];
     const result = [];
-    for (let i = 0; i < Math.min(2, totalMosques); i++) {
-      const index = (currentMosqueIndex + i) % totalMosques;
+    for (let i = 0; i < itemsPerSlide && (currentMosqueIndex + i) < totalMosques; i++) {
+      const index = currentMosqueIndex + i;
       result.push({
         name: mosqueNames[index],
         schedules: mosqueGroups[mosqueNames[index]]
@@ -77,7 +99,7 @@ export default function DarsaSchedule() {
         {/* Carousel Container */}
         <div className="relative max-w-6xl mx-auto">
           {/* Carousel Navigation */}
-          {totalMosques > 2 && (
+          {totalMosques > itemsPerSlide && (
             <>
               <Button
                 size="icon"
@@ -99,7 +121,7 @@ export default function DarsaSchedule() {
           )}
 
           {/* Schedule Cards */}
-          <div className="grid lg:grid-cols-2 gap-8 animate-slide-up">
+          <div className={`grid gap-8 animate-slide-up ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-2'}`}>
             {currentMosques.map((mosque, index) => (
               <Card key={mosque.name} className="bg-white shadow-xl overflow-hidden border border-gray-100">
                 <CardHeader className={`${index === 0 ? 'gradient-green' : 'gradient-orange-yellow'} text-white`}>
@@ -138,19 +160,19 @@ export default function DarsaSchedule() {
           </div>
 
           {/* Carousel Indicators */}
-          {totalMosques > 2 && (
+          {totalMosques > itemsPerSlide && (
             <div className="flex justify-center mt-8 space-x-2">
-              {Array.from({ length: Math.ceil(totalMosques / 2) }).map((_, index) => (
+              {Array.from({ length: maxSlides }).map((_, index) => (
                 <Button
                   key={index}
                   size="sm"
                   variant="ghost"
                   className={`w-3 h-3 rounded-full p-0 ${
-                    Math.floor(currentMosqueIndex / 2) === index 
+                    Math.floor(currentMosqueIndex / itemsPerSlide) === index 
                       ? 'bg-islamic-green' 
                       : 'bg-gray-300'
                   }`}
-                  onClick={() => setCurrentMosqueIndex(index * 2)}
+                  onClick={() => setCurrentMosqueIndex(index * itemsPerSlide)}
                 />
               ))}
             </div>

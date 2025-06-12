@@ -267,6 +267,74 @@ export class MemStorage implements IStorage {
         teacher: "Abuu Swaahib Swaleh",
         additionalInfo: "Sheikh Shahid",
         isActive: true
+      },
+      // Masjid At-Taqwa Kisumu
+      {
+        id: 9,
+        mosqueName: "Masjid At-Taqwa Kisumu",
+        mosqueLocation: "Kisumu",
+        dayOfWeek: "Jumatatu",
+        timeSlot: "Baada Ya Alfajri",
+        subject: "Kitab At-Tawheed",
+        teacher: "Ustadh Omar",
+        additionalInfo: "Darsa la Kijana",
+        isActive: true
+      },
+      {
+        id: 10,
+        mosqueName: "Masjid At-Taqwa Kisumu",
+        mosqueLocation: "Kisumu",
+        dayOfWeek: "Jumatano",
+        timeSlot: "Baada Ya Magharibi",
+        subject: "Tafseer Al-Qurtubi",
+        teacher: "Sheikh Ibrahim",
+        additionalInfo: "Darsa la Wazee",
+        isActive: true
+      },
+      {
+        id: 11,
+        mosqueName: "Masjid At-Taqwa Kisumu",
+        mosqueLocation: "Kisumu",
+        dayOfWeek: "Ijumaa",
+        timeSlot: "Kabla ya Jumaa",
+        subject: "Sirah Nabawiyya",
+        teacher: "Ustadh Hassan",
+        additionalInfo: "Darsa la Familia",
+        isActive: true
+      },
+      // Masjid Ar-Rahman Eldoret
+      {
+        id: 12,
+        mosqueName: "Masjid Ar-Rahman Eldoret",
+        mosqueLocation: "Eldoret",
+        dayOfWeek: "Jumanne",
+        timeSlot: "Baada Ya Dhuhr",
+        subject: "Fiqh Al-Ibadat",
+        teacher: "Sheikh Abdullahi",
+        additionalInfo: "Darsa la Kufunza",
+        isActive: true
+      },
+      {
+        id: 13,
+        mosqueName: "Masjid Ar-Rahman Eldoret",
+        mosqueLocation: "Eldoret",
+        dayOfWeek: "Alhamisi",
+        timeSlot: "Baada Ya Asr",
+        subject: "Hadith Arba'een",
+        teacher: "Ustadh Musa",
+        additionalInfo: "Darsa la Vijana",
+        isActive: true
+      },
+      {
+        id: 14,
+        mosqueName: "Masjid Ar-Rahman Eldoret",
+        mosqueLocation: "Eldoret",
+        dayOfWeek: "Jumamosi",
+        timeSlot: "Baada Ya Alfajri",
+        subject: "Akhlaq wal-Adab",
+        teacher: "Sheikh Yusuf",
+        additionalInfo: "Darsa la Adabu",
+        isActive: true
       }
     ];
 
