@@ -1,0 +1,134 @@
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Article } from "@shared/schema";
+
+export default function ArticlesSection() {
+  const { data: articles, isLoading } = useQuery<Article[]>({
+    queryKey: ['/api/articles'],
+  });
+
+  if (isLoading) {
+    return (
+      <section className="py-16 bg-white" id="makala">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <Skeleton className="h-12 w-96 mx-auto mb-4" />
+            <Skeleton className="h-6 w-128 mx-auto" />
+          </div>
+          <div className="max-w-4xl mx-auto mb-12">
+            <Skeleton className="h-64 w-full rounded-2xl" />
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton key={index} className="h-96 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const featuredArticle = articles?.[0];
+  const otherArticles = articles?.slice(1) || [];
+
+  return (
+    <section className="py-16 bg-white" id="makala">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12 animate-fade-in">
+          <h2 className="text-4xl font-bold text-islamic-green mb-4 font-playfair">Makala za Kiislamu</h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">Soma makala za kielimu zinazojadili masuala muhimu ya dini</p>
+        </div>
+
+        {/* Featured Article */}
+        {featuredArticle && (
+          <div className="max-w-4xl mx-auto mb-12 animate-slide-up">
+            <Card className="bg-gradient-to-r from-islamic-green to-green-600 overflow-hidden shadow-2xl">
+              <div className="md:flex">
+                <div className="md:w-1/2">
+                  <img 
+                    src={featuredArticle.coverImage} 
+                    alt={featuredArticle.title}
+                    className="w-full h-64 md:h-full object-cover" 
+                  />
+                </div>
+                <div className="md:w-1/2 p-8 text-white">
+                  <Badge className="bg-white/20 text-white text-sm mb-4">
+                    Makala Mpya
+                  </Badge>
+                  <h3 className="text-3xl font-bold font-playfair mb-4">{featuredArticle.title}</h3>
+                  <p className="text-white/80 mb-6 leading-relaxed">{featuredArticle.excerpt}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-bold">SH</span>
+                      </div>
+                      <div>
+                        <p className="font-semibold">{featuredArticle.author}</p>
+                        <p className="text-white/70 text-sm">
+                          {new Date(featuredArticle.publishedAt).toLocaleDateString('sw-KE', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric' 
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <Button className="bg-white text-islamic-green px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+                      Soma Zaidi
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* Articles Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {otherArticles.map((article) => (
+            <Card key={article.id} className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+              <div className="relative overflow-hidden">
+                <img 
+                  src={article.coverImage} 
+                  alt={article.title}
+                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
+                />
+                <div className="absolute top-4 left-4">
+                  <Badge className="bg-islamic-green text-white">
+                    {article.category}
+                  </Badge>
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold text-islamic-green mb-3 group-hover:text-warm-orange transition-colors">
+                  {article.title}
+                </h3>
+                <p className="text-gray-600 mb-4 text-sm leading-relaxed">{article.excerpt}</p>
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <span>
+                    {new Date(article.publishedAt).toLocaleDateString('sw-KE', { 
+                      day: 'numeric', 
+                      month: 'long', 
+                      year: 'numeric' 
+                    })}
+                  </span>
+                  <span>Dakika {article.readingTime} za kusoma</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Load More Button */}
+        <div className="text-center mt-12">
+          <Button className="bg-gradient-to-r from-islamic-green to-green-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
+            Ona Makala Zaidi
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
