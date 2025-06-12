@@ -105,9 +105,21 @@ INSERT INTO schedules (mosque_name, mosque_location, day_of_week, time_slot, sub
 ('Masjid An-Nuur Nairobi', 'Nairobi', 'Jumamosi', 'Baada Ya Magharibi', 'Aruumuudhaaq Maqj''ill', 'Abuu Khatlaab', 'Sheikh Shahid', TRUE),
 ('Masjid An-Nuur Nairobi', 'Nairobi', 'Jumapili', 'Baada Ya Magharibi', 'Meeshakawuud Al-arqaqm', 'Abuu Swaahib Swaleh', 'Sheikh Shahid', TRUE);
 
--- Create storage buckets (Run these separately in Supabase Storage section)
--- INSERT INTO storage.buckets (id, name, public) VALUES ('audio-files', 'audio-files', true);
--- INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true);
+-- Create storage buckets and policies
+-- First create the buckets (if they don't exist)
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('audio-files', 'audio-files', true)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('images', 'images', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Create storage policies for public access
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (true);
+CREATE POLICY "Public Upload" ON storage.objects FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public Update" ON storage.objects FOR UPDATE USING (true);
+CREATE POLICY "Public Delete" ON storage.objects FOR DELETE USING (true);
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
