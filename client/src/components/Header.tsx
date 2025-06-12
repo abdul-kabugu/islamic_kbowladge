@@ -95,7 +95,7 @@ export default function Header() {
               >
                 Dashboard
               </Button>
-              <Button className="bg-gradient-to-r from-warm-orange to-warm-yellow text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-300">
+              <Button className="bg-gradient-to-r from-warm-orange to-warm-yellow text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-300 text-black">
                 Changia
               </Button>
             </div>
