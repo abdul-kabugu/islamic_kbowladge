@@ -16,6 +16,11 @@ import {
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+console.log('Checking Supabase env vars:', {
+  url: supabaseUrl ? 'SET' : 'NOT SET',
+  key: supabaseServiceKey ? 'SET' : 'NOT SET'
+});
+
 if (!supabaseUrl || !supabaseServiceKey) {
   console.warn('Supabase environment variables not found. Using in-memory storage.');
 }
