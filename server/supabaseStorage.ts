@@ -35,7 +35,7 @@ const supabase = supabaseUrl && supabaseServiceKey
   ? createClient(supabaseUrl, supabaseServiceKey)
   : null;
 
-// Initialize database tables and sample data
+// Initialize database tables and storage buckets
 async function initializeDatabase() {
   if (!supabase) return;
   
@@ -49,8 +49,62 @@ async function initializeDatabase() {
     } else {
       console.log('Successfully connected to Supabase database with existing tables.');
     }
+
+    // Initialize storage buckets
+    await initializeStorageBuckets();
   } catch (error) {
     console.log('Database initialization needed. Please run the SQL setup script in your Supabase SQL editor.');
+  }
+}
+
+// Create storage buckets for file uploads
+async function initializeStorageBuckets() {
+  if (!supabase) return;
+
+  try {
+    // Check if buckets exist
+    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+    
+    if (listError) {
+      console.log('Storage access error:', listError.message);
+      return;
+    }
+
+    const existingBuckets = buckets?.map(b => b.name) || [];
+    
+    // Create audio-files bucket if it doesn't exist
+    if (!existingBuckets.includes('audio-files')) {
+      const { error: audioError } = await supabase.storage.createBucket('audio-files', {
+        public: true,
+        allowedMimeTypes: ['audio/mpeg', 'audio/wav', 'audio/mp3'],
+        fileSizeLimit: 50 * 1024 * 1024 // 50MB
+      });
+      
+      if (audioError) {
+        console.log('Error creating audio-files bucket:', audioError.message);
+      } else {
+        console.log('Created audio-files storage bucket');
+      }
+    }
+
+    // Create images bucket if it doesn't exist
+    if (!existingBuckets.includes('images')) {
+      const { error: imageError } = await supabase.storage.createBucket('images', {
+        public: true,
+        allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+        fileSizeLimit: 10 * 1024 * 1024 // 10MB
+      });
+      
+      if (imageError) {
+        console.log('Error creating images bucket:', imageError.message);
+      } else {
+        console.log('Created images storage bucket');
+      }
+    }
+
+    console.log('Storage buckets initialized successfully');
+  } catch (error) {
+    console.log('Storage bucket initialization error:', error);
   }
 }
 
