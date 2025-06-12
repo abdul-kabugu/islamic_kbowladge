@@ -1,179 +1,149 @@
-# الشيخ شاهد (Sheikh Shahid) - Islamic Studies Website
+# Sheikh Shahid - Islamic Studies Website
 
-A comprehensive Kiswahili Islamic studies website with Darsa schedules, YouTube videos, audio content, articles, and donation features. Built with modern web technologies and Supabase backend.
+A comprehensive Kiswahili Islamic studies website featuring Darsa schedules, audio lectures, articles, and video content management.
 
 ## Features
 
-- **Arabic/Kiswahili Interface**: Beautiful bilingual design with proper Arabic typography
-- **Audio Player**: Stream Islamic teachings and lectures  
-- **Video Integration**: YouTube video embedding for educational content
-- **Article Management**: Islamic articles with rich content
-- **Schedule System**: Live Darsa schedules for different mosques
-- **Content Dashboard**: Admin interface for managing all content
-- **Donation Modal**: Encouraging donation system
-- **Responsive Design**: Works perfectly on all devices
+- **Kiswahili Interface** - Full website in Kiswahili with Arabic elements
+- **Audio Lectures** - Stream Islamic lectures with file upload support
+- **Articles System** - Islamic articles with rich content management
+- **Video Integration** - YouTube video integration for visual content
+- **Darsa Schedules** - Weekly Islamic study schedules across mosques
+- **Admin Dashboard** - Complete content management system
+- **File Uploads** - Direct file upload for audio and images
+- **Responsive Design** - Beautiful orange-to-gold gradient design
 
-## Tech Stack
+## Technology Stack
 
-- **Frontend**: React + TypeScript + Vite
-- **Styling**: TailwindCSS + shadcn/ui
-- **Backend**: Express.js + TypeScript
+- **Frontend**: React 18, TypeScript, Tailwind CSS
+- **Backend**: Express.js, Node.js
 - **Database**: Supabase (PostgreSQL)
-- **Routing**: Wouter
-- **State Management**: TanStack Query
-- **Deployment**: Replit
+- **Storage**: Supabase Storage for file uploads
+- **UI Components**: Shadcn/ui, Radix UI
+- **Styling**: Tailwind CSS with custom Islamic design
 
 ## Quick Start
 
-### 1. Clone and Setup
+### 1. Clone Repository
+```bash
+git clone https://github.com/yourusername/sheikh-shahid-website.git
+cd sheikh-shahid-website
+```
 
-The project is already configured. Just set up your Supabase database:
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-### 2. Supabase Setup
+### 3. Environment Setup
+Create `.env` file:
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+```
 
-1. **Create a Supabase Project**:
-   - Go to [supabase.com](https://supabase.com)
-   - Create a new project
-   - Wait for the database to be ready
+### 4. Database Setup
+Run the SQL commands from `supabase_setup.sql` in your Supabase dashboard.
 
-2. **Get Your Credentials**:
-   - Go to Settings > API in your Supabase dashboard
-   - Copy the Project URL and anon public key
-   - Copy the service role key (for backend)
-
-3. **Set Environment Variables**:
-   Create a `.env` file in the root directory:
-   ```env
-   # Backend Supabase Configuration
-   SUPABASE_URL=https://your-project-id.supabase.co
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-   # Frontend Supabase Configuration  
-   VITE_SUPABASE_URL=https://your-project-id.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-anon-public-key
-   ```
-
-4. **Initialize Database**:
-   - Open the Supabase SQL Editor
-   - Copy and paste the contents of `supabase_setup.sql`
-   - Execute the queries to create tables and sample data
-
-5. **Create Storage Buckets** (Optional):
-   - Go to Storage in Supabase dashboard
-   - Create buckets named: `images` and `audio-files`
-   - Set them to public if you want direct file access
-
-### 3. Run the Application
-
-The application will automatically start using Supabase once environment variables are configured. If not configured, it falls back to in-memory storage for development.
-
+### 5. Start Development
 ```bash
 npm run dev
 ```
 
-## Content Management
+## Project Structure
 
-### Accessing the Dashboard
+```
+sheikh-shahid-website/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/         # Application pages
+│   │   ├── lib/           # Utilities and API clients
+│   │   └── hooks/         # Custom React hooks
+├── server/                # Express backend
+│   ├── routes.ts          # API routes
+│   ├── storage.ts         # Database operations
+│   └── index.ts           # Server entry point
+├── shared/                # Shared types and schemas
+└── supabase_setup.sql     # Database schema
+```
 
-Visit `/dashboard` to access the content management interface. The dashboard allows you to:
+## Features Overview
 
-- **Manage Articles**: Create, edit, and delete Islamic articles
-- **Audio Content**: Upload and manage audio lectures
-- **Video Management**: Add YouTube videos with descriptions
-- **Schedule Management**: Create and update Darsa schedules for different mosques
+### Homepage
+- Beautiful Islamic design with Arabic typography
+- Live audio player with current lecture
+- Featured articles carousel
+- Video teachings section
+- Darsa schedule display
+
+### Admin Dashboard
+- Content management for articles, audio, videos, schedules
+- File upload functionality for images and audio
+- Real-time content updates
+- Kiswahili interface
 
 ### Content Types
 
-1. **Articles**:
-   - Title, content, excerpt
-   - Category (Akidah, Fiqh, Maadili, Tarehe)
-   - Cover image, reading time
-   - Published date
+#### Articles (Makala)
+- Title, content, excerpt
+- Categories: Akidah, Fiqh, Maadili, Tarehe
+- Cover image upload
+- Reading time estimation
 
-2. **Audio Content**:
-   - Title, description
-   - Audio file URL, cover image
-   - Duration, currently playing status
+#### Audio Content (Sauti)
+- Title and description
+- Audio file upload (up to 50MB)
+- Cover image upload
+- Duration tracking
+- Currently playing status
 
-3. **Videos**:
-   - YouTube integration
-   - Title, description, duration
-   - Automatic thumbnail generation
+#### Videos
+- YouTube integration
+- Title and description
+- Thumbnail and duration
+- Publication date
 
-4. **Schedules**:
-   - Mosque information
-   - Day, time, subject, teacher
-   - Active/inactive status
-
-## Database Schema
-
-The Supabase database includes these tables:
-
-- `articles`: Islamic articles and blog posts
-- `audio_content`: Audio lectures and teachings
-- `videos`: YouTube video references
-- `schedules`: Darsa schedules for different mosques
-
-All tables include automatic timestamps and proper indexing for performance.
-
-## File Storage
-
-For file uploads (audio files, images):
-
-1. **Audio Files**: Store in `audio-files` bucket
-2. **Images**: Store in `images` bucket
-3. **Access**: Use Supabase Storage API for upload/download
-
-## Styling & Theming
-
-The website uses Islamic-inspired colors:
-
-- **Primary**: Islamic Green (`#1F4E3D`)
-- **Secondary**: Warm Orange (`#FF8C00`)
-- **Accent**: Warm Yellow (`#FFD700`)
-
-Typography includes:
-- **Arabic**: Amiri font for Arabic text
-- **English/Kiswahili**: Inter font for modern readability
-- **Headings**: Playfair Display for elegance
-
-## Security
-
-- **Row Level Security (RLS)**: Enabled on all tables
-- **Public Read**: Anyone can read content
-- **Authenticated Write**: Only authenticated users can modify content
-- **Environment Variables**: Sensitive keys stored securely
+#### Darsa Schedule (Ratiba)
+- Mosque information
+- Day and time slots
+- Subject and teacher
+- Active/inactive status
 
 ## Deployment
 
-The application is ready for deployment on Replit or any Node.js hosting platform:
+See `DEPLOYMENT.md` for detailed deployment instructions for:
+- Vercel (Recommended)
+- Netlify
+- Railway
+- Render
 
-1. Set environment variables in your hosting platform
-2. Ensure Supabase database is accessible
-3. Deploy using the provided configuration
+## Environment Variables
 
-## Development Notes
-
-- **Fallback Storage**: If Supabase isn't configured, the app uses in-memory storage
-- **Error Handling**: Comprehensive error handling for database operations
-- **Type Safety**: Full TypeScript support throughout the application
-- **Responsive**: Mobile-first design approach
-
-## Language Support
-
-- **Primary**: Kiswahili (Swahili)
-- **Secondary**: Arabic for Islamic terms and prayers
-- **UI**: Modern Kiswahili interface with proper cultural context
+### Required
+- `SUPABASE_URL` - Your Supabase project URL
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+- `VITE_SUPABASE_URL` - Supabase URL for frontend
+- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
 
 ## Contributing
 
-When adding new features:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-1. Follow the existing TypeScript patterns
-2. Use the established styling system
-3. Maintain the Islamic cultural context
-4. Test with both in-memory and Supabase storage
+## License
+
+MIT License - see LICENSE file for details
 
 ## Support
 
-For setup assistance or customization needs, refer to the Supabase documentation or reach out with specific questions about the implementation.
+For support and questions, please open an issue in the GitHub repository.
+
+---
+
+**Built with ❤️ for the Islamic community**
