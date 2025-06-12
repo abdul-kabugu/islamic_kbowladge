@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Article } from "@shared/schema";
 
 export default function ArticlesSection() {
+  const [, setLocation] = useLocation();
   const { data: articles, isLoading } = useQuery<Article[]>({
     queryKey: ['/api/articles'],
   });
@@ -45,7 +47,7 @@ export default function ArticlesSection() {
         {/* Featured Article */}
         {featuredArticle && (
           <div className="max-w-4xl mx-auto mb-12 animate-slide-up">
-            <Card className="bg-gradient-to-r from-islamic-green to-green-600 overflow-hidden shadow-2xl">
+            <Card className="bg-gradient-to-r from-islamic-green to-green-600 overflow-hidden shadow-2xl cursor-pointer hover:shadow-3xl transition-all duration-300" onClick={() => setLocation(`/article/${featuredArticle.id}`)}>
               <div className="md:flex">
                 <div className="md:w-1/2">
                   <img 
@@ -89,7 +91,7 @@ export default function ArticlesSection() {
         {/* Articles Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {otherArticles.map((article) => (
-            <Card key={article.id} className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+            <Card key={article.id} className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group cursor-pointer" onClick={() => setLocation(`/article/${article.id}`)}>
               <div className="relative overflow-hidden">
                 <img 
                   src={article.coverImage} 
