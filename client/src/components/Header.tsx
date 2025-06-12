@@ -87,9 +87,18 @@ export default function Header() {
             >
               Ratiba ya Darsa
             </button>
-            <Button className="bg-gradient-to-r from-warm-orange to-warm-yellow text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-300">
-              Changia
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button 
+                onClick={() => window.open('/dashboard', '_blank')}
+                variant="outline"
+                className="border-islamic-green text-islamic-green hover:bg-islamic-green hover:text-white px-4 py-2 rounded-full font-medium transition-all duration-300"
+              >
+                Dashboard
+              </Button>
+              <Button className="bg-gradient-to-r from-warm-orange to-warm-yellow text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-300">
+                Changia
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}

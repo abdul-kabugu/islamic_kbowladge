@@ -15,6 +15,7 @@ import {
   type Schedule,
   type InsertSchedule
 } from "@shared/schema";
+import { SupabaseStorage } from './supabaseStorage';
 
 export interface IStorage {
   // User methods
@@ -391,4 +392,7 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Use Supabase storage if environment variables are available, otherwise fallback to MemStorage
+export const storage = process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY 
+  ? new SupabaseStorage() 
+  : new MemStorage();
