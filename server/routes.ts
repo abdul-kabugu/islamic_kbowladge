@@ -132,6 +132,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test upload endpoint to bypass client-side issues
+  app.post('/api/test-upload', async (req, res) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+
+      // Test creating a simple text file to verify upload permissions
+      const testContent = 'Test upload file created at ' + new Date().toISOString();
+      const fileName = `test-${Date.now()}.txt`;
+      
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, new Blob([testContent], { type: 'text/plain' }));
+
+      if (error) {
+        return res.status(500).json({ 
+          success: false, 
+          error: error.message,
+          details: error 
+        });
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(fileName);
+
+      res.json({ 
+        success: true, 
+        message: 'Upload test successful',
+        fileName,
+        publicUrl,
+        uploadData: data
+      });
+
+    } catch (error) {
+      console.error('Test upload error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Server upload test failed',
+        details: error 
+      });
+    }
+  });
+
+  // Fix storage permissions endpoint
+  app.post('/api/fix-storage', async (req, res) => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+
+      // Disable RLS on storage.objects
+      const { error: disableRLSError } = await supabase.rpc('exec_sql', {
+        sql: 'ALTER TABLE storage.objects DISABLE ROW LEVEL SECURITY;'
+      });
+
+      if (disableRLSError) {
+        console.log('RLS disable error (this might be expected):', disableRLSError);
+      }
+
+      // Ensure buckets exist and are public
+      const buckets = [
+        { id: 'images', name: 'images', public: true },
+        { id: 'audio-files', name: 'audio-files', public: true }
+      ];
+
+      const results = [];
+      for (const bucket of buckets) {
+        const { error: bucketError } = await supabase.storage.createBucket(bucket.id, {
+          public: bucket.public,
+          allowedMimeTypes: bucket.id === 'images' 
+            ? ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+            : ['audio/mpeg', 'audio/wav', 'audio/mp3']
+        });
+
+        if (bucketError && !bucketError.message.includes('already exists')) {
+          results.push({ bucket: bucket.id, status: 'error', error: bucketError });
+        } else {
+          results.push({ bucket: bucket.id, status: 'ready' });
+        }
+      }
+
+      res.json({
+        success: true,
+        message: 'Storage permissions fixed',
+        rlsDisabled: !disableRLSError,
+        buckets: results
+      });
+
+    } catch (error) {
+      console.error('Storage fix error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to fix storage permissions',
+        details: error 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

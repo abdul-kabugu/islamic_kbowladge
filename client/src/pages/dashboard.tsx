@@ -505,7 +505,7 @@ function CreateEditModal({
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const bucketName = fileType === 'image' ? 'images' : 'audio';
+      const bucketName = fileType === 'image' ? 'images' : 'audio-files';
       const filePath = `${bucketName}/${fileName}`;
 
       // Simulate upload progress
