@@ -7,6 +7,13 @@ import path from "path";
 // Load environment variables from the root directory
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
+// Set Supabase environment variables directly if not loaded
+if (!process.env.SUPABASE_URL) {
+  process.env.SUPABASE_URL = 'https://bmykpetfwyfmcqbtibzu.supabase.co';
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteWtwZXRmd3lmbWNxYnRpYnp1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTczMjc0NSwiZXhwIjoyMDY1MzA4NzQ1fQ.Jgo4rE4WsJvuyNvHbRg6wclIr1jrqNW21emHx47Kw6I';
+  process.env.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteWtwZXRmd3lmbWNxYnRpYnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3MzI3NDUsImV4cCI6MjA2NTMwODc0NX0.Su8bdZdO3yHAbaU8JuJXd5MW35oUPowuQtN4Rsi3WGk';
+}
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

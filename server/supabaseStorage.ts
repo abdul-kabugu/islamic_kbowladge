@@ -13,6 +13,12 @@ import {
   type InsertSchedule
 } from "@shared/schema";
 
+// Set Supabase environment variables directly
+if (!process.env.SUPABASE_URL) {
+  process.env.SUPABASE_URL = 'https://bmykpetfwyfmcqbtibzu.supabase.co';
+  process.env.SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteWtwZXRmd3lmbWNxYnRpYnp1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0OTczMjc0NSwiZXhwIjoyMDY1MzA4NzQ1fQ.Jgo4rE4WsJvuyNvHbRg6wclIr1jrqNW21emHx47Kw6I';
+}
+
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -28,6 +34,28 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabase = supabaseUrl && supabaseServiceKey 
   ? createClient(supabaseUrl, supabaseServiceKey)
   : null;
+
+// Initialize database tables and sample data
+async function initializeDatabase() {
+  if (!supabase) return;
+  
+  try {
+    // Check if tables exist by trying to select from them
+    const { data: articles } = await supabase.from('articles').select('id').limit(1);
+    
+    if (!articles) {
+      console.log('Database tables not found. Please run the SQL setup script in your Supabase SQL editor.');
+      console.log('The script is available in supabase_setup.sql file in the project root.');
+    } else {
+      console.log('Successfully connected to Supabase database with existing tables.');
+    }
+  } catch (error) {
+    console.log('Database initialization needed. Please run the SQL setup script in your Supabase SQL editor.');
+  }
+}
+
+// Initialize on module load
+initializeDatabase();
 
 export class SupabaseStorage implements IStorage {
   // User operations

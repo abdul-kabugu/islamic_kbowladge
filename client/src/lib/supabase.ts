@@ -1,12 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://bmykpetfwyfmcqbtibzu.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteWtwZXRmd3lmbWNxYnRpYnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3MzI3NDUsImV4cCI6MjA2NTMwODc0NX0.Su8bdZdO3yHAbaU8JuJXd5MW35oUPowuQtN4Rsi3WGk';
 
-// Only create Supabase client if environment variables are available
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+// Create Supabase client with provided credentials
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database table interfaces based on our schema
 export interface SupabaseArticle {
