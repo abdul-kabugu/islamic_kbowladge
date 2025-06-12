@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,9 +22,11 @@ import {
   Calendar,
   Save,
   Upload,
-  Eye
+  Eye,
+  ImageIcon,
+  FileAudio
 } from "lucide-react";
-import { supabaseApi, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
+import { supabaseApi, supabase, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("articles");
@@ -480,6 +482,134 @@ function CreateEditModal({
   onSubmit: (data: any) => void;
 }) {
   const [formData, setFormData] = useState<any>({});
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const audioFileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  // File upload handler
+  const handleFileUpload = async (file: File, fileType: 'image' | 'audio') => {
+    if (!supabase) {
+      toast({
+        title: "Hitilafu",
+        description: "Supabase haijaunganishwa",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const bucketName = fileType === 'image' ? 'images' : 'audio';
+      const filePath = `${bucketName}/${fileName}`;
+
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 100);
+
+      const { error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file);
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(filePath);
+
+      toast({
+        title: "Imefanikiwa",
+        description: `Faili ${fileType === 'image' ? 'la picha' : 'la sauti'} limepakiwa`,
+      });
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "Hitilafu ya upakiaji",
+        description: "Imeshindwa kupakia faili",
+        variant: "destructive",
+      });
+      return null;
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  // Handle image file selection
+  const handleImageFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Aina ya faili si sahihi",
+        description: "Chagua faili la picha tu",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Faili kubwa sana",
+        description: "Ukubwa wa faili usizidi MB 5",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const url = await handleFileUpload(file, 'image');
+    if (url) {
+      setFormData(prev => ({ ...prev, cover_image: url }));
+    }
+  };
+
+  // Handle audio file selection
+  const handleAudioFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('audio/')) {
+      toast({
+        title: "Aina ya faili si sahihi",
+        description: "Chagua faili la sauti tu",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      toast({
+        title: "Faili kubwa sana",
+        description: "Ukubwa wa faili la sauti usizidi MB 50",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const url = await handleFileUpload(file, 'audio');
+    if (url) {
+      setFormData(prev => ({ ...prev, audio_url: url }));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -550,13 +680,42 @@ function CreateEditModal({
               </div>
               <div>
                 <Label htmlFor="cover_image">Picha ya Jalada</Label>
-                <Input 
-                  id="cover_image"
-                  value={formData.cover_image || ''}
-                  onChange={(e) => updateFormData('cover_image', e.target.value)}
-                  placeholder="URL ya picha"
-                  required
-                />
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input 
+                      id="cover_image"
+                      value={formData.cover_image || ''}
+                      onChange={(e) => updateFormData('cover_image', e.target.value)}
+                      placeholder="URL ya picha au pakia kutoka kifaa"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="flex items-center gap-2"
+                    >
+                      <ImageIcon className="w-4 h-4" />
+                      {uploading ? `${uploadProgress}%` : 'Pakia'}
+                    </Button>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageFileSelect}
+                    className="hidden"
+                  />
+                  {uploading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-islamic-green h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      ></div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <Label htmlFor="reading_time">Muda wa Kusoma (dakika)</Label>
@@ -592,22 +751,82 @@ function CreateEditModal({
                 />
               </div>
               <div>
-                <Label htmlFor="audio_url">URL ya Sauti</Label>
-                <Input 
-                  id="audio_url"
-                  value={formData.audio_url || ''}
-                  onChange={(e) => updateFormData('audio_url', e.target.value)}
-                  required
-                />
+                <Label htmlFor="audio_url">Faili la Sauti</Label>
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input 
+                      id="audio_url"
+                      value={formData.audio_url || ''}
+                      onChange={(e) => updateFormData('audio_url', e.target.value)}
+                      placeholder="URL ya sauti au pakia kutoka kifaa"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => audioFileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="flex items-center gap-2"
+                    >
+                      <FileAudio className="w-4 h-4" />
+                      {uploading ? `${uploadProgress}%` : 'Pakia'}
+                    </Button>
+                  </div>
+                  <input
+                    ref={audioFileInputRef}
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleAudioFileSelect}
+                    className="hidden"
+                  />
+                  {uploading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-islamic-green h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      ></div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <Label htmlFor="cover_image">Picha ya Jalada</Label>
-                <Input 
-                  id="cover_image"
-                  value={formData.cover_image || ''}
-                  onChange={(e) => updateFormData('cover_image', e.target.value)}
-                  required
-                />
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input 
+                      id="cover_image"
+                      value={formData.cover_image || ''}
+                      onChange={(e) => updateFormData('cover_image', e.target.value)}
+                      placeholder="URL ya picha au pakia kutoka kifaa"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="flex items-center gap-2"
+                    >
+                      <ImageIcon className="w-4 h-4" />
+                      {uploading ? `${uploadProgress}%` : 'Pakia'}
+                    </Button>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageFileSelect}
+                    className="hidden"
+                  />
+                  {uploading && (
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-islamic-green h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      ></div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <Label htmlFor="duration">Muda</Label>
