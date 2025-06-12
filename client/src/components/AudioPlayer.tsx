@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,6 +8,7 @@ import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import type { AudioContent } from "@shared/schema";
 
 export default function AudioPlayer() {
+  const [, setLocation] = useLocation();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -186,6 +188,16 @@ export default function AudioPlayer() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+
+          {/* View More Audio Button */}
+          <div className="text-center mt-12">
+            <Button 
+              onClick={() => setLocation("/audio")}
+              className="bg-gradient-to-r from-islamic-green to-green-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
+            >
+              Sikiliza Mafunzo Zaidi
+            </Button>
           </div>
         </div>
       </div>

@@ -126,7 +126,10 @@ export default function ArticlesSection() {
 
         {/* Load More Button */}
         <div className="text-center mt-12">
-          <Button className="bg-gradient-to-r from-islamic-green to-green-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
+          <Button 
+            onClick={() => setLocation("/articles")}
+            className="bg-gradient-to-r from-islamic-green to-green-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
+          >
             Ona Makala Zaidi
           </Button>
         </div>
