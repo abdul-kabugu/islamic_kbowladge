@@ -84,7 +84,7 @@ export default function AudioPlayer() {
         <div className="max-w-4xl mx-auto">
           {/* Current Audio Player */}
           {currentAudio && (
-            <Card className="bg-gradient-to-r from-islamic-green to-green-600 text-white shadow-2xl mb-8 animate-slide-up">
+            <Card className="bg-white border-2 border-islamic-green shadow-2xl mb-8 animate-slide-up">
               <CardContent className="p-8">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   {/* Audio Cover */}
@@ -97,29 +97,29 @@ export default function AudioPlayer() {
                   </div>
 
                   <div className="flex-grow text-center md:text-left">
-                    <h3 className="text-2xl font-bold mb-2 font-playfair">{currentAudio.title}</h3>
-                    <p className="text-white/80 mb-4">{currentAudio.description}</p>
+                    <h3 className="text-2xl font-bold mb-2 font-playfair text-islamic-green">{currentAudio.title}</h3>
+                    <p className="text-gray-700 mb-4">{currentAudio.description}</p>
                     
                     {/* Audio Controls */}
                     <div className="flex items-center gap-4 mb-4 justify-center md:justify-start">
                       <Button 
                         size="icon"
                         variant="ghost"
-                        className="bg-white/20 hover:bg-white/30 rounded-full p-3 text-white"
+                        className="bg-islamic-green/10 hover:bg-islamic-green/20 rounded-full p-3 text-islamic-green"
                       >
                         <SkipBack className="w-5 h-5" />
                       </Button>
                       <Button 
                         size="icon"
                         onClick={togglePlayPause}
-                        className="bg-white text-islamic-green rounded-full p-4 hover:bg-gray-100 transition-colors shadow-lg"
+                        className="bg-islamic-green text-white rounded-full p-4 hover:bg-green-700 transition-colors shadow-lg"
                       >
                         {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
                       </Button>
                       <Button 
                         size="icon"
                         variant="ghost"
-                        className="bg-white/20 hover:bg-white/30 rounded-full p-3 text-white"
+                        className="bg-islamic-green/10 hover:bg-islamic-green/20 rounded-full p-3 text-islamic-green"
                       >
                         <SkipForward className="w-5 h-5" />
                       </Button>
@@ -127,14 +127,14 @@ export default function AudioPlayer() {
 
                     {/* Progress Bar */}
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-white/70">{formatTime(currentTime)}</span>
-                      <div className="flex-grow bg-white/20 rounded-full h-2">
+                      <span className="text-sm text-gray-600">{formatTime(currentTime)}</span>
+                      <div className="flex-grow bg-gray-200 rounded-full h-2">
                         <div 
-                          className="bg-white rounded-full h-2 transition-all duration-300"
+                          className="bg-islamic-green rounded-full h-2 transition-all duration-300"
                           style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
                         />
                       </div>
-                      <span className="text-sm text-white/70">{currentAudio.duration}</span>
+                      <span className="text-sm text-gray-600">{currentAudio.duration}</span>
                     </div>
 
                     {/* Hidden Audio Element */}

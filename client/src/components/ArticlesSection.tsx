@@ -47,7 +47,7 @@ export default function ArticlesSection() {
         {/* Featured Article */}
         {featuredArticle && (
           <div className="max-w-4xl mx-auto mb-12 animate-slide-up">
-            <Card className="bg-gradient-to-r from-islamic-green to-green-600 overflow-hidden shadow-2xl cursor-pointer hover:shadow-3xl transition-all duration-300" onClick={() => setLocation(`/article/${featuredArticle.id}`)}>
+            <Card className="bg-white border-2 border-islamic-green overflow-hidden shadow-2xl cursor-pointer hover:shadow-3xl transition-all duration-300" onClick={() => setLocation(`/article/${featuredArticle.id}`)}>
               <div className="md:flex">
                 <div className="md:w-1/2">
                   <img 
@@ -56,20 +56,20 @@ export default function ArticlesSection() {
                     className="w-full h-64 md:h-full object-cover" 
                   />
                 </div>
-                <div className="md:w-1/2 p-8 text-white">
-                  <Badge className="bg-white/20 text-white text-sm mb-4">
+                <div className="md:w-1/2 p-8">
+                  <Badge className="bg-islamic-green text-white text-sm mb-4">
                     Makala Mpya
                   </Badge>
-                  <h3 className="text-3xl font-bold font-playfair mb-4">{featuredArticle.title}</h3>
-                  <p className="text-white/80 mb-6 leading-relaxed">{featuredArticle.excerpt}</p>
+                  <h3 className="text-3xl font-bold font-playfair mb-4 text-islamic-green">{featuredArticle.title}</h3>
+                  <p className="text-gray-700 mb-6 leading-relaxed">{featuredArticle.excerpt}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-bold">SH</span>
+                      <div className="w-10 h-10 bg-islamic-green/10 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-bold text-islamic-green">SH</span>
                       </div>
                       <div>
-                        <p className="font-semibold">{featuredArticle.author}</p>
-                        <p className="text-white/70 text-sm">
+                        <p className="font-semibold text-gray-900">{featuredArticle.author}</p>
+                        <p className="text-gray-600 text-sm">
                           {new Date(featuredArticle.publishedAt).toLocaleDateString('sw-KE', { 
                             day: 'numeric', 
                             month: 'long', 
@@ -78,7 +78,7 @@ export default function ArticlesSection() {
                         </p>
                       </div>
                     </div>
-                    <Button className="bg-white text-islamic-green px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+                    <Button className="bg-islamic-green text-white px-6 py-2 rounded-full font-semibold hover:bg-green-700 transition-colors">
                       Soma Zaidi
                     </Button>
                   </div>
