@@ -8,16 +8,24 @@ import { ArrowLeft, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import type { Article } from "@shared/schema";
+import { supabaseApi, supabase, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
 
 export default function ArticlesPage() {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const { data: articles, isLoading } = useQuery<Article[]>({
+ /* const { data: articles, isLoading } = useQuery<Article[]>({
     queryKey: ['/api/articles'],
-  });
+  });*/
 
+    // Queries for each content type
+    const { data: articles, isLoading: articlesLoading } = useQuery({
+      queryKey: ['dashboard-articles'],
+      queryFn: supabaseApi.getArticles,
+     
+    });
+console.log("articles", articles)
   const categories = ["All", "Aqeedah", "Fiqh", "Tafseer", "Hadith", "Sirah"];
 
   const filteredArticles = articles?.filter(article => {
@@ -27,7 +35,7 @@ export default function ArticlesPage() {
     return matchesSearch && matchesCategory;
   });
 
-  if (isLoading) {
+  if (articlesLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50">
         <div className="container mx-auto px-4 py-8">
@@ -120,7 +128,7 @@ export default function ArticlesPage() {
             >
               <div className="relative overflow-hidden">
                 <img 
-                  src={article.coverImage} 
+                  src={article.cover_image} 
                   alt={article.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
                 />
@@ -139,13 +147,13 @@ export default function ArticlesPage() {
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <span>
-                    {new Date(article.publishedAt).toLocaleDateString('sw-KE', { 
+                    {new Date(article.published_at).toLocaleDateString('sw-KE', { 
                       day: 'numeric', 
                       month: 'long', 
                       year: 'numeric' 
                     })}
                   </span>
-                  <span>Dakika {article.readingTime} za kusoma</span>
+                  <span>Dakika {article.reading_time} za kusoma</span>
                 </div>
               </CardContent>
             </Card>

@@ -5,14 +5,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Article } from "@shared/schema";
+import { supabaseApi, supabase, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
 
 export default function ArticlesSection() {
   const [, setLocation] = useLocation();
-  const { data: articles, isLoading } = useQuery<Article[]>({
+  /*const { data: articles, isLoading } = useQuery<Article[]>({
     queryKey: ['/api/articles'],
+  });*/
+
+    const { data: articles, isLoading: articlesLoading } = useQuery({
+    queryKey: ['dashboard-articles'],
+    queryFn: supabaseApi.getArticles,
+   // enabled: activeTab === 'articles'
   });
 
-  if (isLoading) {
+
+
+  if (articlesLoading) {
     return (
       <section className="py-16 bg-white" id="makala">
         <div className="container mx-auto px-4">
@@ -34,7 +43,7 @@ export default function ArticlesSection() {
   }
 
   const featuredArticle = articles?.[0];
-  const otherArticles = articles?.slice(1) || [];
+  const otherArticles = articles?.slice(1, 4) || [];
 
   return (
     <section className="py-16 bg-white" id="makala">
@@ -51,7 +60,7 @@ export default function ArticlesSection() {
               <div className="md:flex">
                 <div className="md:w-1/2">
                   <img 
-                    src={featuredArticle.coverImage} 
+                    src={featuredArticle.cover_image} 
                     alt={featuredArticle.title}
                     className="w-full h-64 md:h-full object-cover" 
                   />
@@ -94,7 +103,7 @@ export default function ArticlesSection() {
             <Card key={article.id} className="bg-white shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group cursor-pointer" onClick={() => setLocation(`/article/${article.id}`)}>
               <div className="relative overflow-hidden">
                 <img 
-                  src={article.coverImage} 
+                  src={article.cover_image} 
                   alt={article.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
                 />
@@ -128,7 +137,7 @@ export default function ArticlesSection() {
         <div className="text-center mt-12">
           <Button 
             onClick={() => setLocation("/articles")}
-            className="bg-gradient-to-r from-islamic-green to-green-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
+            className="bg-gradient-to-r from-islamic-green to-green-600 text-yellow-500 px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
           >
             Ona Makala Zaidi
           </Button>

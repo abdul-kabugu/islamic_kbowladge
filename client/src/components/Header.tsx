@@ -87,7 +87,7 @@ export default function Header() {
             >
               Ratiba ya Darsa
             </button>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 hidden">
               <Button 
                 onClick={() => window.open('/dashboard', '_blank')}
                 variant="outline"

@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Play, Pause, Search, Calendar, Clock } from "lucide-react";
 import type { AudioContent } from "@shared/schema";
+import { supabaseApi, supabase, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
 
 export default function AudioPage() {
   const [, setLocation] = useLocation();
@@ -15,22 +16,30 @@ export default function AudioPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { data: audioList, isLoading } = useQuery<AudioContent[]>({
+  /*const { data: audioList, isLoading } = useQuery<AudioContent[]>({
     queryKey: ['/api/audio'],
-  });
+  });*/
 
-  const filteredAudio = audioList?.filter(audio =>
+ 
+
+    const { data: audioContent, isLoading: audioLoading } = useQuery({
+    queryKey: ['dashboard-audio'],
+    queryFn: supabaseApi.getAudioContent,
+    //enabled: activeTab === 'audio'
+  });
+  const filteredAudio = audioContent?.filter(audio =>
     audio.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     audio.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+   console.log("auidi", audioContent )
 
-  const playAudio = (audio: AudioContent) => {
+  const playAudio = (audio: SupabaseAudioContent) => {
     if (currentPlayingId === audio.id && isPlaying) {
       audioRef.current?.pause();
       setIsPlaying(false);
     } else {
       if (audioRef.current) {
-        audioRef.current.src = audio.audioUrl;
+        audioRef.current.src = audio.audio_url;
         audioRef.current.play();
         setCurrentPlayingId(audio.id);
         setIsPlaying(true);
@@ -51,7 +60,7 @@ export default function AudioPage() {
     }
   }, []);
 
-  if (isLoading) {
+  if (audioLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50">
         <div className="container mx-auto px-4 py-8">
@@ -121,7 +130,7 @@ export default function AudioPage() {
             >
               <div className="relative overflow-hidden">
                 <img 
-                  src={audio.coverImage} 
+                  src={audio.cover_image} 
                   alt={audio.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
                 />
@@ -182,7 +191,7 @@ export default function AudioPage() {
                   ) : (
                     <>
                       <Play className="w-4 h-4 mr-2" />
-                      Cheza
+                      Play
                     </>
                   )}
                 </Button>

@@ -3,13 +3,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, Youtube } from "lucide-react";
 import type { Video } from "@shared/schema";
+import { supabaseApi, supabase, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
 
 export default function VideoSection() {
-  const { data: videos, isLoading } = useQuery<Video[]>({
+  /*const { data: videos, isLoading } = useQuery<Video[]>({
     queryKey: ['/api/videos'],
+  });*/
+
+   const { data: videos, isLoading: videosLoading } = useQuery({
+    queryKey: ['dashboard-videos'],
+    queryFn: supabaseApi.getVideos,
+    //enabled: activeTab === 'videos'
   });
 
-  if (isLoading) {
+  console.log("videos", videos)
+
+  if (videosLoading) {
     return (
       <section className="py-16 bg-gradient-to-br from-gray-50 to-white" id="hotuba">
         <div className="container mx-auto px-4">
@@ -31,7 +40,7 @@ export default function VideoSection() {
   }
 
   const featuredVideo = videos?.[0];
-  const otherVideos = videos?.slice(1) || [];
+  const otherVideos = videos?.slice(1, 6) || [];
 
   const openYouTubeVideo = (youtubeId: string) => {
     window.open(`https://www.youtube.com/watch?v=${youtubeId}`, '_blank');
@@ -52,13 +61,13 @@ export default function VideoSection() {
               <div className="relative">
                 <div className="aspect-video bg-gray-200 flex items-center justify-center">
                   <img 
-                    src={`https://img.youtube.com/vi/${featuredVideo.youtubeId}/maxresdefault.jpg`}
+                    src={`https://img.youtube.com/vi/${featuredVideo.youtube_id}/maxresdefault.jpg`}
                     alt={featuredVideo.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <button 
-                  onClick={() => openYouTubeVideo(featuredVideo.youtubeId)}
+                  onClick={() => openYouTubeVideo(featuredVideo.youtube_id)}
                   className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors group"
                 >
                   <div className="bg-red-600 rounded-full p-4 group-hover:scale-110 transition-transform">
@@ -92,13 +101,13 @@ export default function VideoSection() {
               <Card 
                 key={video.id} 
                 className="bg-white shadow-md hover:shadow-lg transition-shadow cursor-pointer group"
-                onClick={() => openYouTubeVideo(video.youtubeId)}
+                onClick={() => openYouTubeVideo(video.youtube_id)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="w-24 h-16 bg-gray-200 rounded-lg flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                       <img 
-                        src={`https://img.youtube.com/vi/${video.youtubeId}/default.jpg`}
+                        src={`https://img.youtube.com/vi/${video.youtube_id}/default.jpg`}
                         alt={video.title}
                         className="w-full h-full object-cover"
                       />

@@ -94,9 +94,9 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4 font-playfair">Mawasiliano</h4>
             <ul className="space-y-2 text-white/80">
-              <li>+254 700 000 000</li>
+              <li>+255 700 000 000</li>
               <li>info@sheikhshahid.com</li>
-              <li>Nairobi, Kenya</li>
+              <li>Mwanza, Tanzania</li>
             </ul>
           </div>
         </div>

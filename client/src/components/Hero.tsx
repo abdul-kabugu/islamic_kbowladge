@@ -43,7 +43,7 @@ export default function Hero() {
                 <Button 
                   onClick={() => scrollToSection('makala')}
                   variant="outline"
-                  className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-islamic-green transition-all duration-300"
+                  className="border-2 border-white text-green-700 px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-islamic-green transition-all duration-300"
                 >
                   Soma Makala
                 </Button>

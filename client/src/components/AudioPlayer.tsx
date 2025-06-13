@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import type { AudioContent } from "@shared/schema";
+import { supabaseApi, supabase, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
 
 export default function AudioPlayer() {
   const [, setLocation] = useLocation();
@@ -14,14 +15,14 @@ export default function AudioPlayer() {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { data: currentAudio, isLoading: currentLoading } = useQuery<AudioContent>({
-    queryKey: ['/api/audio/current'],
-  });
 
-  const { data: audioList, isLoading: listLoading } = useQuery<AudioContent[]>({
-    queryKey: ['/api/audio'],
-  });
-
+   const { data: audioContent, isLoading: audioLoading } = useQuery({
+       queryKey: ['dashboard-audio'],
+       queryFn: supabaseApi.getAudioContent,
+       //enabled: activeTab === 'audio'
+     });
+   const currentAudio = audioContent?.find(audio => audio.is_currently_playing);
+const audioList = audioContent?.filter(audio => !audio.is_currently_playing)
   const togglePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -55,7 +56,7 @@ export default function AudioPlayer() {
     }
   }, [currentAudio]);
 
-  if (currentLoading || listLoading) {
+  if (audioLoading) {
     return (
       <section className="py-16 bg-white" id="mafunzo">
         <div className="container mx-auto px-4">
@@ -92,7 +93,7 @@ export default function AudioPlayer() {
                   {/* Audio Cover */}
                   <div className="w-32 h-32 rounded-xl overflow-hidden shadow-lg flex-shrink-0">
                     <img 
-                      src={currentAudio.coverImage} 
+                      src={currentAudio.cover_image} 
                       alt={currentAudio.title}
                       className="w-full h-full object-cover" 
                     />
@@ -159,7 +160,7 @@ export default function AudioPlayer() {
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-lg overflow-hidden">
                       <img 
-                        src={audio.coverImage} 
+                        src={audio.cover_image} 
                         alt={audio.title}
                         className="w-full h-full object-cover" 
                       />
@@ -169,7 +170,7 @@ export default function AudioPlayer() {
                         {audio.title}
                       </h4>
                       <p className="text-gray-600 text-sm">
-                        Tarehe: {new Date(audio.publishedAt).toLocaleDateString('sw-KE', { 
+                        Tarehe: {new Date(audio.published_at).toLocaleDateString('sw-KE', { 
                           day: 'numeric', 
                           month: 'long', 
                           year: 'numeric' 
@@ -194,7 +195,7 @@ export default function AudioPlayer() {
           <div className="text-center mt-12">
             <Button 
               onClick={() => setLocation("/audio")}
-              className="bg-gradient-to-r from-islamic-green to-green-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
+              className="bg-gradient-to-r from-islamic-green to-green-600 text-yellow-600 px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
             >
               Sikiliza Mafunzo Zaidi
             </Button>

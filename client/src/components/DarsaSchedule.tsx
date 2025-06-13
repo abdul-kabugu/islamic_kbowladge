@@ -5,15 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Schedule } from "@shared/schema";
+import { supabaseApi, supabase, type SupabaseArticle, type SupabaseAudioContent, type SupabaseVideo, type SupabaseSchedule } from "@/lib/supabase";
 
 export default function DarsaSchedule() {
   const [currentMosqueIndex, setCurrentMosqueIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { data: schedules, isLoading } = useQuery<Schedule[]>({
+  /*const { data: schedules, isLoading } = useQuery<Schedule[]>({
     queryKey: ['/api/schedules'],
+  });*/
+
+   const { data: schedules, isLoading: schedulesLoading } = useQuery({
+    queryKey: ['dashboard-schedules'],
+    queryFn: supabaseApi.getSchedules,
+    //enabled: activeTab === 'schedules'
   });
 
+  console.log("schedules", schedules)
   // Check for mobile screen size
   useEffect(() => {
     const checkScreenSize = () => {
@@ -26,7 +34,7 @@ export default function DarsaSchedule() {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  if (isLoading) {
+  if (schedulesLoading) {
     return (
       <section className="py-16 bg-gradient-to-br from-gray-50 to-white" id="ratiba">
         <div className="container mx-auto px-4">
@@ -45,7 +53,7 @@ export default function DarsaSchedule() {
 
   // Group schedules by mosque
   const mosqueGroups = schedules?.reduce((acc, schedule) => {
-    const key = schedule.mosqueName;
+    const key = schedule.mosque_name;
     if (!acc[key]) {
       acc[key] = [];
     }
@@ -53,6 +61,7 @@ export default function DarsaSchedule() {
     return acc;
   }, {} as Record<string, Schedule[]>) || {};
 
+   console.log("mosques group", mosqueGroups)
   const mosqueNames = Object.keys(mosqueGroups);
   const totalMosques = mosqueNames.length;
 
@@ -130,11 +139,11 @@ export default function DarsaSchedule() {
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="space-y-4">
-                    {mosque.schedules.map((schedule) => (
+                    {mosque.schedules.map((schedule : SupabaseSchedule) => (
                       <div 
                         key={schedule.id} 
                         className={`flex items-center justify-between p-3 rounded-lg ${
-                          schedule.dayOfWeek === 'Jumatatu' 
+                          schedule.day_of_week === 'Jumatatu' 
                             ? 'bg-islamic-green/10 border-l-4 border-islamic-green' 
                             : 'bg-gray-50'
                         }`}
@@ -143,13 +152,13 @@ export default function DarsaSchedule() {
                           <span className={`font-semibold ${
                             index === 0 ? 'text-islamic-green' : 'text-warm-orange'
                           }`}>
-                            {schedule.dayOfWeek}
+                            {schedule.day_of_week}
                           </span>
                           <p className="text-sm text-gray-600">{schedule.subject}</p>
                         </div>
                         <div className="text-right">
                           <span className="font-semibold">{schedule.teacher}</span>
-                          <p className="text-sm text-gray-600">{schedule.additionalInfo}</p>
+                          <p className="text-sm text-gray-600">{schedule.additional_info}</p>
                         </div>
                       </div>
                     ))}

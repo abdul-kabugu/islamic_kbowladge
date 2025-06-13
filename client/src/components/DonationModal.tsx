@@ -43,7 +43,7 @@ export default function DonationModal() {
       {/* Floating Donate Button */}
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-warm-orange to-warm-yellow hover:from-warm-yellow hover:to-warm-orange text-white rounded-full p-4 shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-white/20"
+        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-warm-orange to-warm-yellow hover:from-warm-yellow hover:to-warm-orange text-gray-900 rounded-full p-4 shadow-2xl transition-all duration-300 hover:scale-110 border-2 border-white/20"
       >
         <Heart className="w-6 h-6" />
         <span className="ml-2 font-semibold">Changia</span>
